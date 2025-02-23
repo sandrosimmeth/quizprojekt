@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: emerald;
+}
+
+:root {
+  font-family: "Nunito","Caveat", Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+}
