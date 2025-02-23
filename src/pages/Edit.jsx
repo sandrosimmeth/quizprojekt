@@ -58,7 +58,7 @@ const Edit = ({ user }) => {
   const handleSave = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:80/quiz/quizprojekt/php/api/update_quiz.php",
+        `${import.meta.env.VITE_APP_URL}/update_quiz.php`,
         { quizData },
         { withCredentials: true }
       );
@@ -101,7 +101,7 @@ const Edit = ({ user }) => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:80/quiz/quizprojekt/php/api/delete_quiz.php",
+        `${import.meta.env.VITE_APP_URL}/delete_quiz.php`,
         { catalog_id }
       );
       if (response.data.status === "ok") {
@@ -120,7 +120,7 @@ const Edit = ({ user }) => {
     const getModules = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:80/quiz/quizprojekt/php/api/get_module.php",
+          `${import.meta.env.VITE_APP_URL}/get_module.php`,
           {}
         );
         setModules(response.data.modules);
@@ -146,7 +146,7 @@ const Edit = ({ user }) => {
     const getQuiz = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:80/quiz/quizprojekt/php/api/get_quiz.php",
+          `${import.meta.env.VITE_APP_URL}/get_quiz.php`,
           { catalog_id },
           { withCredentials: true }
         );

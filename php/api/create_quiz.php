@@ -7,7 +7,7 @@
 // Wir geben an, dass der HTTP-Response-Body im JSON-Format zurückgesendet wird.
 // Das ist wichtig für Clients (z. B. dein JavaScript im Browser), um die Antwort korrekt zu interpretieren.
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: http://localhost:4173');
+header('Access-Control-Allow-Origin: http://localhost:5173');
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');

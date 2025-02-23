@@ -15,7 +15,7 @@ const Login = ({ setUser }) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:80/quiz/quizprojekt/php/api/login_process.php",
+        `${import.meta.env.VITE_APP_URL}/login_process.php`,
         { username, password },
         { withCredentials: true }
       );

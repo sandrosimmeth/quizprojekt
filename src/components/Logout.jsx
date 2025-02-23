@@ -10,7 +10,7 @@ const Logout = ({ className }) => {
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:80/quiz/quizprojekt/php/api/logout.php",
+        `${import.meta.env.VITE_APP_URL}/logout.php`,
         {},
         { withCredentials: true }
       );

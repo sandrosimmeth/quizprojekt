@@ -40,7 +40,7 @@ const Create = ({ user }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:80/quiz/quizprojekt/php/api/create_quiz.php",
+        `${import.meta.env.VITE_APP_URL}/create_quiz.php`,
         { quizData },
         { withCredentials: true } // Pass credentials configuration
       );

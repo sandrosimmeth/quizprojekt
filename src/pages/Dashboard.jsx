@@ -25,7 +25,7 @@ const Dashboard = ({ user }) => {
     if (favorites.includes(Number(catalog_id))) {
       try {
         const response = await axios.post(
-          "http://localhost:80/quiz/quizprojekt/php/api/remove_from_favorites.php",
+          `${import.meta.env.VITE_APP_URL}/remove_from_favorites.php`,
           { catalog_id },
           { withCredentials: true }
         );
@@ -44,7 +44,7 @@ const Dashboard = ({ user }) => {
     } else {
       try {
         const response = await axios.post(
-          "http://localhost:80/quiz/quizprojekt/php/api/add_to_favorites.php",
+          `${import.meta.env.VITE_APP_URL}/add_to_favorites.php`,
           { catalog_id },
           { withCredentials: true }
         );
@@ -67,7 +67,7 @@ const Dashboard = ({ user }) => {
     const getFavorites = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:80/quiz/quizprojekt/php/api/get_favorites.php",
+          `${import.meta.env.VITE_APP_URL}/get_favorites.php`,
           {},
           { withCredentials: true }
         );
@@ -86,7 +86,7 @@ const Dashboard = ({ user }) => {
     const getStudyprogram = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:80/quiz/quizprojekt/php/api/get_study_program.php",
+          `${import.meta.env.VITE_APP_URL}/get_study_program.php`,
           {},
           { withCredentials: true }
         );
@@ -105,7 +105,7 @@ const Dashboard = ({ user }) => {
     const getPoints = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:80/quiz/quizprojekt/php/api/get_points.php",
+          `${import.meta.env.VITE_APP_URL}/get_points.php`,
           {},
           { withCredentials: true }
         );
@@ -132,7 +132,7 @@ const Dashboard = ({ user }) => {
 
       try {
         const response = await axios.post(
-          "http://localhost:80/quiz/quizprojekt/php/api/get_all_quizzes.php",
+          `${import.meta.env.VITE_APP_URL}/get_all_quizzes.php`,
           {},
           { withCredentials: true }
         );

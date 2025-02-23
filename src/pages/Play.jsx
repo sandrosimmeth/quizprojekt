@@ -28,7 +28,7 @@ const Play = ({ user }) => {
   const updateProgress = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:80/quiz/quizprojekt/php/api/update_progress.php",
+        `${import.meta.env.VITE_APP_URL}/update_progress.php`,
         { points, correctQuestion, user_id: user.user_id, catalog_id },
         { withCredentials: true }
       );
@@ -95,7 +95,7 @@ const Play = ({ user }) => {
     const getQuiz = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:80/quiz/quizprojekt/php/api/play.php",
+          `${import.meta.env.VITE_APP_URL}/play.php`,
           { catalog_id },
           { withCredentials: true }
         );

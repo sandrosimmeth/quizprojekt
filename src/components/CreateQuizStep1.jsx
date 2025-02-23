@@ -12,7 +12,7 @@ const CreateQuizStep1 = ({ quizData, setQuizData, setStep }) => {
   const getModules = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:80/quiz/quizprojekt/php/api/get_module.php",
+        `${import.meta.env.VITE_APP_URL}/get_module.php`,
         {}
       );
       setModules(response.data.modules);

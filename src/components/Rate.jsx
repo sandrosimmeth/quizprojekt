@@ -18,7 +18,7 @@ const Rate = ({ setError, setMessage, catalog_id }) => {
     if (rating) {
       try {
         const response = await axios.post(
-          "http://localhost:80/quiz/quizprojekt/php/api/rate_quiz.php",
+          `${import.meta.env.VITE_APP_URL}/rate_quiz.php`,
           { catalog_id, rating },
           { withCredentials: true }
         );
