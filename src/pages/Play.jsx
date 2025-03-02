@@ -165,20 +165,20 @@ const Play = ({ user }) => {
           <h1 className="font-black top-8 text-4xl absolute">
             {quiz.quiz_name}
           </h1>
-          <div className="p-4 w-[50%] h-[65%] flex flex-col items-center justify-center  ">
+          <div className="p-4 w-[50%] max-w-[1000px] flex flex-col items-center justify-center  ">
             {/* Frage anzeigen */}
-            <div className="mb-4 bg-secondary rounded-4xl h-[40%] w-[95%] justify-center flex items-center shadow-md">
+            <div className="mb-4 pt-32 pb-32 pl-2 pr-2 bg-secondary rounded-4xl w-full justify-center flex items-center shadow-md">
               <span className="mb-2 text-2xl font-black text-center text-base-100">{`${
                 index + 1
               }. ${quiz.questions[index].text}`}</span>
             </div>
 
             {/* Antwortmöglichkeiten */}
-            <ul className="answers-list grid grid-cols-2 gap-4 w-[95%]">
+            <ul className="answers-list grid grid-cols-2 grid-rows-2 gap-4 w-full">
               {quiz.questions[index].answers.map((answer, aIndex) => (
                 <li
                   key={aIndex}
-                  className={`shadow-md answer-item pl-1 pr-1 pt-6 pb-6 font-black rounded-2xl text-lg text-center cursor-pointer ${
+                  className={`shadow-md answer-item pl-2 pr-2 pt-8 pb-8 font-black rounded-2xl text-lg text-center cursor-pointer ${
                     answered
                       ? "bg-accent"
                       : "hover:bg-secondary hover:text-base-100 bg-base-200"
