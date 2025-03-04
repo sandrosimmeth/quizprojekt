@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Logout from "../components/Logout";
-import { IoCreate, IoRibbon } from "react-icons/io5";
-import quizLogo from "../assets/logo_quiz.svg";
-import { IoPerson } from "react-icons/io5";
+import { IoCloseCircle } from "react-icons/io5";
 import axios from "axios";
 import DisplayQuizzes from "../components/DisplayQuizzes";
+import Leaderboard from "../components/Leaderboard";
+import Header from "../components/Header";
 
 const Dashboard = ({ user }) => {
   let navigate = useNavigate();
@@ -14,11 +13,12 @@ const Dashboard = ({ user }) => {
   const [favorites, setFavorites] = useState([Number]); // Favoriten des Nutzers hier sind nur catalog_id's drinnen
   const [loading, setLoading] = useState(true); // Ladezustand, welcher nach Abschluss der Asynchronen Funktionnen beendet wird
   const [studyProgram, setStudyProgram] = useState(""); // Der Studiengang des Nutzers
-  const [allQuizzes, setAllQuizzes] = useState([]); // Alle Quizzes mit Metadaten
+  const [exploreQuizzes, setExploreQuizzes] = useState([]); // Alle Quizzes mit Metadaten
   const [userQuizzes, setUserQuizzes] = useState([]); // Alle Quizzes, die der Nutzer selbst erstellt hat mit Metadaten -> wird aus allQuizzes gefiltert
   const [favoriteQuizzes, setFavoriteQuizzes] = useState([]); // Alle Quizzes, die der Nutzer favorisiert hat mit Metadaten -> wird aus allQuizzes gefiltert über favorited mit catalog_id
   const [matchingQuizzes, setMatchingQuizzes] = useState([]); // Alle Quizzes, die zum Studiengang des Nutzers passen mit Metadaten -> wird aus allQuizzes gefiltert über study_programm
   const [points, setPoints] = useState(); // Punkte des Nutzers, werden aus der Datenbank geladen
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
 
   // Funktion für Favorisieren und Entfavorisieren von Quizzes
   const handleFavorite = async (catalog_id) => {
@@ -137,20 +137,11 @@ const Dashboard = ({ user }) => {
           { withCredentials: true }
         );
         if (response.data.status === "ok") {
-          // Sortierung nach avg_rating absteigend
-          const sortedQuizzes = response.data.quizzes.sort((a, b) => {
-            // Convert avg_rating to numbers; handle null values as -Infinity
-            const ratingA =
-              a.avg_rating !== null ? parseFloat(a.avg_rating) : -Infinity;
-            const ratingB =
-              b.avg_rating !== null ? parseFloat(b.avg_rating) : -Infinity;
-
-            // Sort descending
-            return ratingB - ratingA;
-          });
-
-          // Hier wird der Array allQuizzes mit allen Quizzes aus der Datenbank befüllt
-          setAllQuizzes(sortedQuizzes);
+          setExploreQuizzes(
+            response.data.quizzes.filter(
+              (quiz) => Number(user.user_id) != Number(quiz.creator_id)
+            )
+          );
 
           // Hier wird der Array userQuizzes mit allen Quizzes aus dem Array allQuizzes befüllt, bei dem die user_id mit der creator_id übereinstimmen
           setUserQuizzes(
@@ -168,7 +159,9 @@ const Dashboard = ({ user }) => {
           // Hier wird der Array favoriteQuizzes mit allen Quizzes aus dem Array allQuizzes befüllt, bei dem catalog_id in dem array favorites enthalten ist
           setMatchingQuizzes(
             response.data.quizzes.filter(
-              (quiz) => studyProgram == quiz.study_program_id
+              (quiz) =>
+                studyProgram == quiz.study_program_id &&
+                Number(user.user_id) !== Number(quiz.creator_id)
             )
           );
           //Hier wird der ladezustand beendet, nachdem alle Arrays befüllt sind
@@ -230,38 +223,31 @@ const Dashboard = ({ user }) => {
 
   return (
     <>
-      <div className="w-screen h-screen bg-base-100 overflow-xclip">
-        <header className="relative top-0 flex flex-row w-full justify-between items-center pl-6 pr-6 select-none">
-          <button
-            onClick={() => navigate("/create")}
-            className="btn w-48 h-12 text-md rounded-2xl bg-base-200 text-neutral hover:bg-primary hover:text-base-100 border-0 flex"
-          >
-            <IoCreate className="text-3xl" />
-            Quiz erstellen
-          </button>
-          <img src={quizLogo} className="mt-2 w-32" />
-          <div className="mt-2 flex flex-col items-center">
-            <Logout className="flex " />
-            <span className="text-sm flex">
-              <IoPerson className="text-xl mr-2" />
-              Angemeldet als&nbsp;<b>{user.username}</b>
-            </span>
-            <span className="text-3xl flex text-secondary font-bold items-center select-none mt-2">
-              <IoRibbon className="text-5xl mr-2" />
-              {points}
-            </span>
-          </div>
-        </header>
-        <span className="text-4xl font-black ml-3">
-          {user.username}&apos;s Bereich
-        </span>
-        <div className="flex flex-col w-full h-96 pl-6 pr-6">
-          <div className="max-w-full flex flex-col flex-none h-full">
-            <div className="mt-2 flex">
-              <span className="text-2xl font-black">Von mir erstellt</span>
+      {showLeaderboard && (
+        <div className="w-screen h-screen backdrop-blur-2xl fixed flex flex-col items-center justify-center z-50">
+          <div className="w-[50%] h-[70%] bg-base-100 flex shadow-2xl rounded-2xl max-w-[1000px]">
+            <IoCloseCircle
+              className="text-4xl hover:text-red-400 cursor-pointer m-4"
+              onClick={() => setShowLeaderboard(false)}
+            />
+            <div className="w-full h-full flex flex-col items-center pt-18">
+              <Leaderboard setError={setError} userId={user.user_id} />
             </div>
+          </div>
+        </div>
+      )}
+      <Header
+        setShowLeaderboard={setShowLeaderboard}
+        navigate={navigate}
+        user={user}
+        points={points}
+      />
+      <div className="w-screen h-screen bg-base-100 overflow-xclip">
+        <div className="flex flex-col w-full h-96 pl-6 pr-6 mt-12">
+          <div className="max-w-full flex flex-col flex-none h-full">
+            <div className="mt-2 flex"></div>
             {/* Hier werden die selbst erstellten Quizzes angezeigt */}
-            {loading && allQuizzes ? (
+            {loading && userQuizzes ? (
               <div>Lade Quizdaten... </div>
             ) : (
               <DisplayQuizzes
@@ -271,17 +257,16 @@ const Dashboard = ({ user }) => {
                 handleFavorite={handleFavorite}
                 userId={user.user_id}
                 setError={setError}
+                text="Von mir erstellt"
               />
             )}
           </div>
         </div>
         <div className="flex flex-col w-full h-96 pl-6 pr-6">
           <div className="max-w-full flex flex-col flex-none h-full">
-            <div className="mt-2 flex">
-              <span className="text-2xl font-black">Favoriten</span>
-            </div>
+            <div className="mt-2 flex"></div>
             {/*Hier werden die Favoriten des Nutzers angezeigt*/}
-            {loading && allQuizzes ? (
+            {loading && favoriteQuizzes ? (
               <div>Lade Quizdaten... </div>
             ) : (
               <DisplayQuizzes
@@ -291,19 +276,16 @@ const Dashboard = ({ user }) => {
                 handleFavorite={handleFavorite}
                 userId={user.user_id}
                 setError={setError}
+                text="Favoriten"
               />
             )}
           </div>
         </div>
         <div className="flex flex-col w-full h-96 pl-6 pr-6">
           <div className="max-w-full flex flex-col flex-none h-full">
-            <div className="mt-2 flex">
-              <span className="text-2xl font-black">
-                Passend zu meinem Studiengang
-              </span>
-            </div>
+            <div className="mt-2 flex"></div>
             {/*Hier werden die Quizzes passend zum Studiengang des Nutzers angezeigt*/}
-            {loading && allQuizzes ? (
+            {loading && matchingQuizzes ? (
               <div>Lade Quizdaten... </div>
             ) : (
               <DisplayQuizzes
@@ -313,26 +295,26 @@ const Dashboard = ({ user }) => {
                 handleFavorite={handleFavorite}
                 userId={user.user_id}
                 setError={setError}
+                text="Passend zu meinem Studiengang"
               />
             )}
           </div>
         </div>
         <div className="flex flex-col w-full h-96 pl-6 pr-6 ">
           <div className="max-w-full flex flex-col flex-none h-full">
-            <div className="mt-2 flex">
-              <span className="text-2xl font-black">Entdecken</span>
-            </div>
+            <div className="mt-2 flex"></div>
             {/* Hier wird allQuizzes angezeigt*/}
-            {loading && allQuizzes ? (
+            {loading && exploreQuizzes ? (
               <div>Lade Quizdaten... </div>
             ) : (
               <DisplayQuizzes
                 navigate={navigate}
-                quizzes={allQuizzes}
+                quizzes={exploreQuizzes}
                 favorites={favorites}
                 handleFavorite={handleFavorite}
                 userId={user.user_id}
                 setError={setError}
+                text="Entdecken"
               />
             )}
           </div>

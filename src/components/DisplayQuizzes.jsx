@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react";
 import { IoCreate } from "react-icons/io5";
 import { IoAlbums } from "react-icons/io5";
 import { IoHeart } from "react-icons/io5";
+import { IoSearchOutline } from "react-icons/io5";
+import { IoSwapHorizontal } from "react-icons/io5";
 
 const DisplayQuizzes = ({
   navigate,
@@ -9,7 +12,10 @@ const DisplayQuizzes = ({
   handleFavorite,
   userId,
   setError,
+  text,
 }) => {
+  const [sortMethod, setSortMethod] = useState("Datum");
+  const [filteredQuizzes, setFilteredQuizzes] = useState([]);
   const handlePlay = (catalog_id, total_questions) => {
     if (total_questions >= 10) {
       navigate(`/play?catalog_id=${catalog_id}`);
@@ -19,13 +25,68 @@ const DisplayQuizzes = ({
       );
     }
   };
+  const handleSort = () => {
+    if (sortMethod == "Datum") {
+      setFilteredQuizzes(
+        filteredQuizzes.sort((a, b) => {
+          const ratingA = a.avg_rating ? parseFloat(a.avg_rating) : 0; // Konvertiere zu Float or 0 wenn null
+          const ratingB = b.avg_rating ? parseFloat(b.avg_rating) : 0; // Konvertiere zu Float or 0 wenn null
+
+          return ratingB - ratingA;
+        })
+      );
+      setSortMethod("Bewertung");
+    } else {
+      setFilteredQuizzes(
+        filteredQuizzes.sort((a, b) => {
+          return parseInt(a.catalog_id) - parseInt(b.catalog_id); // Konvertiert zu Int für Vergleich
+        })
+      );
+      setSortMethod("Datum");
+    }
+  };
+  const handleSearch = (e) => {
+    const searchQuery = e.target.value;
+    setFilteredQuizzes(
+      quizzes.filter(
+        (quiz) =>
+          quiz.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          quiz.module_name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  };
+  useEffect(() => {
+    setFilteredQuizzes(quizzes);
+  }, [setFilteredQuizzes, quizzes]);
 
   return (
     <>
-      {quizzes && (
+      <div className="flex flex-row items-baseline mb-2 select-none">
+        <div className="text-3xl font-black">{text}</div>
+        <div
+          className="text-base font-light flex ml-16 cursor-pointer hover:text-secondary"
+          onClick={handleSort}
+        >
+          <IoSwapHorizontal className="size-5 " />
+          <span className="ml-2 ">
+            Sortiert nach <span className="font-bold">{sortMethod}</span>
+          </span>
+        </div>
+        <div className="flex ml-8">
+          <IoSearchOutline className="size-5" />
+
+          <input
+            className="pl-1 pr-6 ml-2 border-b-2 border-t-0 border-l-0 border-r-0 font-light focus:outline-none"
+            placeholder="Tippen, um zu suchen..."
+            onChange={handleSearch}
+          />
+        </div>
+      </div>
+
+      {filteredQuizzes && (
         <div className="mt-2 overflow-x-scroll h-full scroll-container">
           <ul className="flex flex-row gap-4 h-[80%]">
-            {quizzes.map((quiz) => (
+            {filteredQuizzes.map((quiz) => (
               <li
                 key={quiz.catalog_id}
                 className="bg-base-300 relative text-neutral rounded-2xl p-4 h w-84 h-64 flex-none flex flex-col justify-center items-center shadow-xl text-center cursor-pointer hover:bg-secondary hover:text-base-100"
