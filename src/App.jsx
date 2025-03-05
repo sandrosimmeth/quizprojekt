@@ -7,6 +7,8 @@ import Play from "./pages/Play";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Edit from "./pages/Edit";
+import Faq from "./pages/Faq";
+import ReportedQuestions from "./pages/ReportedQuestions";
 
 const App = () => {
   const [user, setUser] = useState(null); // Initialize as null
@@ -69,6 +71,15 @@ const App = () => {
           element={
             <ProtectedRoute user={user}>
               <Edit user={user} />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/faq" element={<Faq user={user} />} />
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute user={user}>
+              <ReportedQuestions user={user} />
             </ProtectedRoute>
           }
         />

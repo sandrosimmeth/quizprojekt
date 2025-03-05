@@ -83,7 +83,11 @@ const DisplayQuizzes = ({
         </div>
       </div>
 
-      {filteredQuizzes && (
+      {filteredQuizzes.length == 0 ? (
+        <div className="ml-2 mt-4 text-lg text-base-300">
+          Sieht aus als gibt es keine Quizzes, dieser Kategorie...
+        </div>
+      ) : (
         <div className="mt-2 overflow-x-scroll h-full scroll-container">
           <ul className="flex flex-row gap-4 h-[80%]">
             {filteredQuizzes.map((quiz) => (

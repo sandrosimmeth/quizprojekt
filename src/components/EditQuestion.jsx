@@ -8,6 +8,7 @@ const EditQuestion = ({
   add,
   setAdd,
   setError,
+  setEdited,
 }) => {
   // Update bei Eingabe der Antwort ins Feld
   const handleAnswerChange = (index, value) => {
@@ -41,7 +42,7 @@ const EditQuestion = ({
               ? { ...currentQuestion, id: question.id }
               : question
           );
-
+          setEdited(true);
           return {
             ...prevQuizData,
             questions: updatedQuestions,
@@ -53,7 +54,7 @@ const EditQuestion = ({
           ...prevQuizData,
           questions: [...prevQuizData.questions, currentQuestion],
         }));
-
+        setEdited(true);
         // Reset der aktuellen Frage & Antworten
         setCurrentQuestion([]);
         setError("");

@@ -13,8 +13,6 @@ const Leaderboard = ({ setError, userId }) => {
           {},
           { withCredentials: true }
         );
-        console.log(response.data);
-
         if (response.data.status === "ok") {
           setRanks(response.data.users);
           setLoading(false);

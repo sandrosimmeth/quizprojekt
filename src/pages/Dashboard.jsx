@@ -139,7 +139,9 @@ const Dashboard = ({ user }) => {
         if (response.data.status === "ok") {
           setExploreQuizzes(
             response.data.quizzes.filter(
-              (quiz) => Number(user.user_id) != Number(quiz.creator_id)
+              (quiz) =>
+                Number(user.user_id) !== Number(quiz.creator_id) &&
+                quiz.total_questions >= 10
             )
           );
 
@@ -161,7 +163,8 @@ const Dashboard = ({ user }) => {
             response.data.quizzes.filter(
               (quiz) =>
                 studyProgram == quiz.study_program_id &&
-                Number(user.user_id) !== Number(quiz.creator_id)
+                Number(user.user_id) !== Number(quiz.creator_id) &&
+                quiz.total_questions >= 10
             )
           );
           //Hier wird der ladezustand beendet, nachdem alle Arrays befüllt sind
@@ -197,29 +200,6 @@ const Dashboard = ({ user }) => {
       return () => clearTimeout(timer);
     }
   }, [message]); // Only run the effect when the message state changes
-
-  useEffect(() => {
-    // Funktion, damit man in den Quizzes horizontal scrollen kann... Ja das braucht man wirklich
-    const scrollContainers = document.querySelectorAll(".scroll-container");
-
-    // wheel event handler
-    const handleWheel = (evt) => {
-      evt.preventDefault();
-      evt.currentTarget.scrollLeft += evt.deltaY;
-    };
-
-    // event listener auf alle elemente
-    scrollContainers.forEach((container) => {
-      container.addEventListener("wheel", handleWheel, { passive: false });
-    });
-
-    // Cleanup:  event listener
-    return () => {
-      scrollContainers.forEach((container) => {
-        container.removeEventListener("wheel", handleWheel);
-      });
-    };
-  }, []);
 
   return (
     <>

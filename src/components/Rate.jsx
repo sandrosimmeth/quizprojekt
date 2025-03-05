@@ -44,7 +44,7 @@ const Rate = ({ setError, setMessage, catalog_id }) => {
   };
 
   return (
-    <div className="fixed w-screen h-screen top-0 left-0 flex flex-col items-center justify-center backdrop-blur-3xl">
+    <div className="fixed w-screen h-screen top-0 left-0 flex flex-col items-center justify-center backdrop-blur-3xl z-50">
       <div className="w-full h-full text-9xl flex flex-col justify-center items-center">
         <span className="text-4xl font-black mb-8">
           Wie fandest du dieses Quiz?

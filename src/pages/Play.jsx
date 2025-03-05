@@ -5,6 +5,10 @@ import { IoArrowForwardCircle, IoHome } from "react-icons/io5";
 import { IoRibbon } from "react-icons/io5";
 import { FaLightbulb } from "react-icons/fa";
 import Rate from "../components/Rate";
+import Report from "../components/Report";
+import { TbMessageReportFilled } from "react-icons/tb";
+import "react-tooltip/dist/react-tooltip.css";
+import { Tooltip } from "react-tooltip";
 
 const Play = ({ user }) => {
   const [loading, setLoading] = useState(true); // Ladezustand
@@ -17,6 +21,8 @@ const Play = ({ user }) => {
   const [correctQuestion, setCorrectQuestion] = useState([]); // trackt richtig beantwortete Fragen über die answer_option_id
   const [clickedIndex, setClickedIndex] = useState(null); //Auf welche Frage hat der Nutzer geklickt?
   const [rate, setRate] = useState(false);
+  const [report, setReport] = useState(false);
+
   const location = useLocation();
 
   // Parsing der Query Parameter
@@ -53,11 +59,13 @@ const Play = ({ user }) => {
       setIndex(index + 1);
       setError("");
       setClickedIndex(null);
+      setReport(false);
     } else if (answered && index === quiz.questions.length - 1) {
       // Hier werden werden Punkte und userAnswerLog aktualisiert
       updateProgress();
       setMessage("Gute Arbeit! Dein Fortschritt wurde gespeichert");
       setRate(true);
+      setReport(false);
     } else {
       setError("Beantworte zuerst die Frage");
     }
@@ -153,7 +161,7 @@ const Play = ({ user }) => {
       {loading ? (
         <span className="relative top-20 left-20">Lade Quiz-Daten...</span>
       ) : (
-        <div className="flex flex-col items-center justify-center w-screen h-screen bg-base-100 select-none">
+        <div className="flex flex-col items-center justify-center min-h-screen w-screen bg-base-100 select-none ">
           {rate && (
             <Rate
               setError={setError}
@@ -161,13 +169,28 @@ const Play = ({ user }) => {
               catalog_id={catalog_id}
             />
           )}
+
           {/* Quiz Name anzeigen */}
-          <h1 className="font-black top-8 text-4xl absolute">
-            {quiz.quiz_name}
-          </h1>
-          <div className="p-4 w-[50%] max-w-[1000px] flex flex-col items-center justify-center  ">
+          <h1 className="font-black mb-8 mt-8 text-4xl">{quiz.quiz_name}</h1>
+          {report && (
+            <Report
+              setError={setError}
+              setMessage={setMessage}
+              question_id={quiz.questions[index].question_id}
+              setReport={setReport}
+            />
+          )}
+          <div className="w-[50%] min-w-[400px] max-w-[1000px] flex flex-col items-center justify-center">
             {/* Frage anzeigen */}
-            <div className="mb-4 pt-32 pb-32 pl-2 pr-2 bg-secondary rounded-4xl w-full justify-center flex items-center shadow-md">
+            <div className="mb-4 pt-32 pb-32 pl-2 pr-2 relative bg-secondary rounded-4xl w-full justify-center flex items-center shadow-md">
+              <TbMessageReportFilled
+                className="absolute top-0 left-0 rounded-br-4xl text-neutral bg-base-100 p-2 size-12 cursor-pointer hover:text-amber-500"
+                data-tooltip-id="tooltip-report"
+                data-tooltip-content="Fehler oder sonstiges in der Frage melden"
+                onClick={() => setReport((prev) => !prev)}
+              />
+              <Tooltip id="tooltip-report" />
+
               <span className="mb-2 text-2xl font-black text-center text-base-100">{`${
                 index + 1
               }. ${quiz.questions[index].text}`}</span>
@@ -209,6 +232,20 @@ const Play = ({ user }) => {
               }`}
               onClick={handleForward}
             />
+          </div>
+          <div className="w-[70%] max-w-[1200px] h-2 gap-2 mt-4 flex flex-row mb-8">
+            <div
+              className="bg-green-600 rounded-full h-full"
+              style={{ width: `${points * 10}%` }}
+            ></div>
+            <div
+              className="bg-red-600 rounded-full h-full"
+              style={{ width: `${(index - points) * 10}%` }}
+            ></div>
+            <div
+              className="bg-base-300 rounded-full h-full"
+              style={{ width: `${(10 - index) * 10}%` }}
+            ></div>
           </div>
         </div>
       )}

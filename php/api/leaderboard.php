@@ -4,7 +4,6 @@ header('Access-Control-Allow-Origin: http://localhost:5173');
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');
-
 require_once '../db/db.php';
 if ($conn->connect_error) {
     die(json_encode(['status' => 'error', 'message' => $conn->connect_error]));
@@ -19,8 +18,6 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 $user = $_SESSION['user_id'];
-
-
 // User (username, points) nach Punkten absteigend sortieren
 // -> optional: LIMIT 10, wenn du nur die TOP 10 willst.
 $sql = "SELECT username, points, user_id

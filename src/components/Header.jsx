@@ -1,4 +1,10 @@
-import { IoCreate, IoTrophy, IoHelpCircle, IoPerson } from "react-icons/io5";
+import {
+  IoCreate,
+  IoTrophy,
+  IoHelpCircle,
+  IoPerson,
+  IoInformationCircle,
+} from "react-icons/io5";
 import quizLogo from "../assets/logo_quiz.svg";
 import Logout from "./Logout";
 
@@ -25,7 +31,7 @@ const Header = ({ setShowLeaderboard, navigate, user, points }) => {
           onClick={() => navigate("/reports")}
           className=" text-md rounded-2xl uppercase text-neutral font-black hover:text-secondary border-0 flex cursor-pointer items-center "
         >
-          <IoTrophy className="text-2xl mb-1 mr-1 flex-none" />
+          <IoInformationCircle className="text-2xl mb-1 mr-1 flex-none" />
           Meldungen
         </div>
         <div

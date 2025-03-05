@@ -15,6 +15,8 @@ const Edit = ({ user }) => {
   const [showEditQuestion, setShowEditQuestion] = useState(false);
   const [message, setMessage] = useState(""); // Nachricht für Operationen
   const [add, setAdd] = useState(false); // Nachricht für Operationen
+  const [edited, setEdited] = useState(false); // Nachricht für Operationen
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,6 +32,8 @@ const Edit = ({ user }) => {
       ...quizData,
       quiz_name: event.target.value,
     });
+    setEdited(true);
+    console.log(edited);
   };
   // Modul ändern: User Input im Array updaten
   const handleModuleChange = (event) => {
@@ -37,6 +41,7 @@ const Edit = ({ user }) => {
       ...quizData,
       module_id: event.target.value,
     });
+    setEdited(true);
   };
   // Frage löschen: User Input im Array updaten
   const handleDelete = (index) => {
@@ -47,11 +52,11 @@ const Edit = ({ user }) => {
       ...quizData,
       questions: updatedQuestions,
     });
+    setEdited(true);
   };
 
   const handleEditQuestion = (index) => {
     setShowEditQuestion(true);
-    console.log(quizData.questions[index]);
     setCurrentQuestion(quizData.questions[index]);
   };
 
@@ -65,6 +70,7 @@ const Edit = ({ user }) => {
       // Überprüfen, ob die API-Antwort erfolgreich war
       if (response.data.status === "ok") {
         setMessage(response.data.message);
+        setEdited(false);
       } else {
         // Wenn die Antwort nicht "ok" ist -> Fehlermeldung
         setError(
@@ -152,7 +158,6 @@ const Edit = ({ user }) => {
         );
         // Überprüfen, ob die API-Antwort erfolgreich war
         if (response.data.status === "ok") {
-          console.log(response.data.quiz);
           setQuizData(response.data.quiz);
           setLoading(false); // Ladezustand beenden, wenn es keinen Fehler gab
         } else {
@@ -193,145 +198,148 @@ const Edit = ({ user }) => {
   }, [error]); // Only run the effect when the message state changes
 
   return (
-    <div className="base-100 w-screen h-screen flex flex-col items-center select-none">
-      <Link to="/dashboard" className="absolute top-3 left-3 text-4xl">
-        <IoHome className="hover:text-secondary" />
-      </Link>
-      <header className="flex flex-col items-center w-full mt-4">
-        <h1 className="text-4xl font-black text-center mb-8">
-          Hey {user.username}, hier kannst du dein Quiz bearbeiten
-        </h1>
-      </header>
-      {showEditQuestion && (
-        <div className="backdrop-blur-xl w-screen h-screen fixed top-0 left-0 z-10 flex flex-col items-center justify-center">
-          <div className="w-[50rem] flex flex-col justify-center bg-base-200 shadow-xl rounded-4xl">
-            <EditQuestion
-              setQuizData={setQuizData}
-              currentQuestion={currentQuestion}
-              setCurrentQuestion={setCurrentQuestion}
-              setShowEditQuestion={setShowEditQuestion}
-              add={add}
-              setAdd={setAdd}
-              setError={setError}
-            />
+    <>
+      <div className="base-100 w-screen h-screen flex flex-col items-center select-none">
+        <Link to="/dashboard" className="absolute top-3 left-3 text-4xl">
+          <IoHome className="hover:text-secondary" />
+        </Link>
+        <header className="flex flex-col items-center w-full mt-4">
+          <h1 className="text-4xl font-black text-center mb-8">
+            Hey {user.username}, hier kannst du dein Quiz bearbeiten
+          </h1>
+        </header>
+        {showEditQuestion && (
+          <div className="backdrop-blur-xl w-screen h-screen fixed top-0 left-0 z-10 flex flex-col items-center justify-center">
+            <div className="w-[50rem] flex flex-col justify-center bg-base-200 shadow-xl rounded-4xl">
+              <EditQuestion
+                setQuizData={setQuizData}
+                currentQuestion={currentQuestion}
+                setCurrentQuestion={setCurrentQuestion}
+                setShowEditQuestion={setShowEditQuestion}
+                add={add}
+                setAdd={setAdd}
+                setError={setError}
+                setEdited={setEdited}
+              />
+            </div>
           </div>
-        </div>
-      )}
-      {loading ? (
-        <span>Lade Quiz-Daten...</span>
-      ) : (
-        <>
-          <span className="text-lg font-bold">Modul:</span>
-          <select
-            className="text-center text-xl rounded-4xl h-12 !bg-base-100"
-            value={quizData.module_id}
-            id="moduleDataList"
-            disabled={loading}
-            onChange={handleModuleChange}
-          >
-            <option value="invalid" disabled>
-              Wähle ein Modul aus...
-            </option>
-            {modules.map((module) => (
-              <option key={module.module_id} value={module.module_id}>
-                {module.name}
+        )}
+        {loading ? (
+          <span>Lade Quiz-Daten...</span>
+        ) : (
+          <>
+            <span className="text-lg font-bold">Modul:</span>
+            <select
+              className="text-center text-xl rounded-4xl h-12 !bg-base-100"
+              value={quizData.module_id}
+              id="moduleDataList"
+              disabled={loading}
+              onChange={handleModuleChange}
+            >
+              <option value="invalid" disabled>
+                Wähle ein Modul aus...
               </option>
-            ))}
-          </select>
-          <span className="text-lg font-bold mt-4">Name:</span>
+              {modules.map((module) => (
+                <option key={module.module_id} value={module.module_id}>
+                  {module.name}
+                </option>
+              ))}
+            </select>
+            <span className="text-lg font-bold mt-4">Name:</span>
 
-          <input
-            className="pl-6 pr-6  border-b-2 border-t-0 border-l-0 border-r-0 text-2xl text-center font-bold focus:outline-none"
-            value={quizData.quiz_name}
-            onChange={handleQuizNameChange}
-          />
-          <ul className="grid grid-cols-6 gap-4 w-[95%] mt-12">
-            {quizData.questions.map((question, qIndex) => (
+            <input
+              className="pl-6 pr-6  border-b-2 border-t-0 border-l-0 border-r-0 text-2xl text-center font-bold focus:outline-none"
+              value={quizData.quiz_name}
+              onChange={handleQuizNameChange}
+            />
+            <ul className="grid grid-cols-6 gap-4 w-[95%] mt-12">
+              {quizData.questions.map((question, qIndex) => (
+                <li
+                  key={qIndex}
+                  className="shadow-md pl-1 pr-1 pt-8 pb-8 font-black rounded-2xl text-lg text-center cursor-pointer bg-base-200 flex flex-col items-center justify-center hover:bg-secondary hover:text-base-100 relative"
+                  onClick={() => handleEditQuestion(qIndex)}
+                >
+                  <span className="bg-base-100 p-1 absolute right-1 top-1 rounded-full">
+                    <IoTrash
+                      className="text-2xl !text-neutral  hover:!text-red-500"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(qIndex);
+                      }}
+                    />
+                  </span>
+                  <span className="flex">{question.text}</span>
+                </li>
+              ))}
               <li
-                key={qIndex}
+                key="createNewQuestion"
                 className="shadow-md pl-1 pr-1 pt-8 pb-8 font-black rounded-2xl text-lg text-center cursor-pointer bg-base-200 flex flex-col items-center justify-center hover:bg-secondary hover:text-base-100 relative"
-                onClick={() => handleEditQuestion(qIndex)}
+                onClick={handleAddQuestion}
               >
-                <span className="bg-base-100 p-1 absolute right-1 top-1 rounded-full">
-                  <IoTrash
-                    className="text-2xl !text-neutral  hover:!text-red-500"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(qIndex);
-                    }}
-                  />
-                </span>
-                <span className="flex">{question.text}</span>
+                <IoAddCircle className="text-6xl" />
               </li>
-            ))}
-            <li
-              key="createNewQuestion"
-              className="shadow-md pl-1 pr-1 pt-8 pb-8 font-black rounded-2xl text-lg text-center cursor-pointer bg-base-200 flex flex-col items-center justify-center hover:bg-secondary hover:text-base-100 relative"
-              onClick={handleAddQuestion}
+            </ul>
+            <div className="w-[10rem] bg-base-200 shadow-xl rounded-2xl"></div>
+            <button
+              className="btn mt-8 w-54 h-14 rounded-2xl bg-success hover:bg-green-700 text-neutral hover:text-base-100 border-0 flex text-xl font-bold"
+              onClick={handleSave}
             >
-              <IoAddCircle className="text-6xl" />
-            </li>
-          </ul>
-          <div className="w-[10rem] bg-base-200 shadow-xl rounded-2xl"></div>
-          <button
-            className="btn mt-8 w-54 h-14 rounded-2xl bg-success hover:bg-green-700 text-neutral hover:text-base-100 border-0 flex text-xl font-bold"
-            onClick={handleSave}
-          >
-            <IoSave className="mr-2 text-2xl" />
-            Quiz speichern
-          </button>
-          <button
-            className="btn mt-8 w-38 h-8 text-sm rounded-2xl bg-red-400 text-neutral hover:bg-red-500 hover:text-base-100 border-0 flex"
-            onClick={handleDeleteQuiz}
-          >
-            <IoTrash className="mr-2 text-2xl" />
-            Quiz löschen
-          </button>
-        </>
-      )}
-      {/* Fehler anzeigen */}
-      {error && (
-        <div className="bottom-4 z-30 fixed flex justify-center w-full">
-          <div role="alert" className="alert alert-error">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 shrink-0 stroke-current"
-              fill="none"
-              viewBox="0 0 24 24"
+              <IoSave className="mr-2 text-2xl" />
+              Quiz speichern
+            </button>
+            <button
+              className="btn mt-8 w-38 h-8 text-sm rounded-2xl bg-red-400 text-neutral hover:bg-red-500 hover:text-base-100 border-0 flex"
+              onClick={handleDeleteQuiz}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span>{error}</span>
+              <IoTrash className="mr-2 text-2xl" />
+              Quiz löschen
+            </button>
+          </>
+        )}
+        {/* Fehler anzeigen */}
+        {error && (
+          <div className="bottom-4 z-30 fixed flex justify-center w-full">
+            <div role="alert" className="alert alert-error">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 shrink-0 stroke-current"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>{error}</span>
+            </div>
           </div>
-        </div>
-      )}
-      {/* Meldung */}
-      {message && (
-        <div className="bottom-4 z-30 fixed flex justify-center w-full">
-          <div role="alert" className="alert alert-success">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 shrink-0 stroke-current"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span>{message}</span>
+        )}
+        {/* Meldung */}
+        {message && (
+          <div className="bottom-4 z-30 fixed flex justify-center w-full">
+            <div role="alert" className="alert alert-success">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 shrink-0 stroke-current"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>{message}</span>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 };
 
