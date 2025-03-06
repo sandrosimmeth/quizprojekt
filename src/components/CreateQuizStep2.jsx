@@ -37,6 +37,7 @@ const CreateQuizStep2 = ({ quizData, setQuizData, setStep, setError }) => {
           className="input w-[70%] text-xl mt-8 rounded-4xl h-12 !bg-base-100"
           placeholder="Gib deinem Quiz einen Namen..."
           onChange={handleChange}
+          maxLength={40}
         />
         <br></br>
         <IoArrowForwardCircle

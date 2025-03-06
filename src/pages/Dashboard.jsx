@@ -210,7 +210,7 @@ const Dashboard = ({ user }) => {
               className="text-4xl hover:text-red-400 cursor-pointer m-4"
               onClick={() => setShowLeaderboard(false)}
             />
-            <div className="w-full h-full flex flex-col items-center pt-18">
+            <div className="w-full h-full flex flex-col items-center mt-8">
               <Leaderboard setError={setError} userId={user.user_id} />
             </div>
           </div>

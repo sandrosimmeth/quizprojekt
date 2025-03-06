@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { IoHome, IoSave } from "react-icons/io5";
 import { IoAddCircle } from "react-icons/io5";
 import { IoTrash } from "react-icons/io5";
@@ -61,25 +61,27 @@ const Edit = ({ user }) => {
   };
 
   const handleSave = async () => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_APP_URL}/update_quiz.php`,
-        { quizData },
-        { withCredentials: true }
-      );
-      // Überprüfen, ob die API-Antwort erfolgreich war
-      if (response.data.status === "ok") {
-        setMessage(response.data.message);
-        setEdited(false);
-      } else {
-        // Wenn die Antwort nicht "ok" ist -> Fehlermeldung
-        setError(
-          `Es gab einen Fehler beim Speichern des Quizzes: ${response.data.message}`
+    if (edited) {
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_APP_URL}/update_quiz.php`,
+          { quizData },
+          { withCredentials: true }
         );
+        // Überprüfen, ob die API-Antwort erfolgreich war
+        if (response.data.status === "ok") {
+          setMessage(response.data.message);
+          setEdited(false);
+        } else {
+          // Wenn die Antwort nicht "ok" ist -> Fehlermeldung
+          setError(
+            `Es gab einen Fehler beim Speichern des Quizzes: ${response.data.message}`
+          );
+        }
+      } catch (error) {
+        console.error("Fehler beim Upaten des Quizzes:", error);
+        setError("Ein Fehler ist beim Aufruf des Servers aufgetreten."); // Fehlernachricht für den Benutzer
       }
-    } catch (error) {
-      console.error("Fehler beim Upaten des Quizzes:", error);
-      setError("Ein Fehler ist beim Aufruf des Servers aufgetreten."); // Fehlernachricht für den Benutzer
     }
   };
 
@@ -120,6 +122,20 @@ const Edit = ({ user }) => {
       console.log(error);
     }
   };
+
+  const handleNavigate = () => {
+    if (edited) {
+      const proceed = window.confirm(
+        "Bist du sicher, dass du zurück zum Dashboard willst? Du hast noch ungespeicherte Änderungen in deinem Quiz."
+      );
+      if (!proceed) {
+        console.log("Action canceled.");
+        return; // Stoppt die weiteren Befehle in der Funktion
+      }
+    }
+    navigate("/dashboard");
+  };
+
   //Aufruf der Funktion getModules() bei rendern der Komponente
   useEffect(() => {
     // Module aus der DB holen
@@ -200,9 +216,10 @@ const Edit = ({ user }) => {
   return (
     <>
       <div className="base-100 w-screen h-screen flex flex-col items-center select-none">
-        <Link to="/dashboard" className="absolute top-3 left-3 text-4xl">
-          <IoHome className="hover:text-secondary" />
-        </Link>
+        <IoHome
+          className="hover:text-secondary absolute top-3 left-3 text-4xl cursor-pointer"
+          onClick={handleNavigate}
+        />
         <header className="flex flex-col items-center w-full mt-4">
           <h1 className="text-4xl font-black text-center mb-8">
             Hey {user.username}, hier kannst du dein Quiz bearbeiten
@@ -248,9 +265,10 @@ const Edit = ({ user }) => {
             <span className="text-lg font-bold mt-4">Name:</span>
 
             <input
-              className="pl-6 pr-6  border-b-2 border-t-0 border-l-0 border-r-0 text-2xl text-center font-bold focus:outline-none"
+              className="pl-6 pr-6 border-b-2 border-t-0 border-l-0 border-r-0 text-2xl text-center font-bold focus:outline-none w-[50%] max-w-[800px]"
               value={quizData.quiz_name}
               onChange={handleQuizNameChange}
+              maxLength={40}
             />
             <ul className="grid grid-cols-6 gap-4 w-[95%] mt-12">
               {quizData.questions.map((question, qIndex) => (
@@ -281,11 +299,15 @@ const Edit = ({ user }) => {
             </ul>
             <div className="w-[10rem] bg-base-200 shadow-xl rounded-2xl"></div>
             <button
-              className="btn mt-8 w-54 h-14 rounded-2xl bg-success hover:bg-green-700 text-neutral hover:text-base-100 border-0 flex text-xl font-bold"
+              className={`btn mt-8 h-16 rounded-full cursor-default ${
+                edited ? `bg-green-500 cursor-pointer` : `bg-base-200`
+              } ${
+                edited && `hover:bg-green-600`
+              } text-base-100 flex text-xl font-bold`}
               onClick={handleSave}
             >
-              <IoSave className="mr-2 text-2xl" />
-              Quiz speichern
+              <IoSave className="mr-2 text-4xl" />
+              Änderungen speichern
             </button>
             <button
               className="btn mt-8 w-38 h-8 text-sm rounded-2xl bg-red-400 text-neutral hover:bg-red-500 hover:text-base-100 border-0 flex"

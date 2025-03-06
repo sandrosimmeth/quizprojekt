@@ -31,16 +31,16 @@ const Leaderboard = ({ setError, userId }) => {
       {loading ? (
         <div>Lade Rangliste...</div>
       ) : (
-        <ul className="list bg-base-100 rounded-box shadow-md w-[80%] overflow-hidden">
+        <ul className="list bg-base-100 rounded-box shadow-md w-[80%] max-h-[100%] mb-8 mt-8 overflow-scroll">
           {ranks.map((rank, index) => (
             <li
               key={index}
               className={`${
                 rank.user_id == userId && `bg-base-200`
-              } p-4 pb-2 text-lg tracking-wide`}
+              } p-4 pb-2 text-lg tracking-wide rounded-box`}
             >
               <li className="list-row">
-                <div className="text-4xl font-thin opacity-70 tabular-nums">
+                <div className="text-4xl font-thin opacity-70 tabular-nums ">
                   {index + 1}
                 </div>
                 <IoPerson className="size-10" />

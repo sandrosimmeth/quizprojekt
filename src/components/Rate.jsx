@@ -28,7 +28,7 @@ const Rate = ({ setError, setMessage, catalog_id }) => {
           // Navigate nach 2 Sekunden
           setTimeout(() => {
             navigate("/dashboard");
-          }, 2000);
+          }, 1000);
         } else {
           setError(response.data.message);
         }

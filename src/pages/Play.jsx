@@ -18,10 +18,13 @@ const Play = ({ user }) => {
   const [index, setIndex] = useState(0); //index für die aktuelle Frage, wird sie beantwortet wird er um 1 erhöht
   const [answered, setAnswered] = useState(false); // State, um die Beantwortung einer Frage zu tracken
   const [points, setPoints] = useState(0); // trackt die Punkte für das aktuell gespielte Quiz
+  const [wrongCount, setWrongCount] = useState(0); // trackt die Punkte für das aktuell gespielte Quiz
   const [correctQuestion, setCorrectQuestion] = useState([]); // trackt richtig beantwortete Fragen über die answer_option_id
   const [clickedIndex, setClickedIndex] = useState(null); //Auf welche Frage hat der Nutzer geklickt?
   const [rate, setRate] = useState(false);
   const [report, setReport] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(20);
+  const [isRunning, setIsRunning] = useState(true);
 
   const location = useLocation();
 
@@ -60,6 +63,7 @@ const Play = ({ user }) => {
       setError("");
       setClickedIndex(null);
       setReport(false);
+      resetTimer();
     } else if (answered && index === quiz.questions.length - 1) {
       // Hier werden werden Punkte und userAnswerLog aktualisiert
       updateProgress();
@@ -73,6 +77,7 @@ const Play = ({ user }) => {
   const handleAnswer = (aIndex) => {
     // answered === false heißt, dass der Nutzer noch keine Antwort abgegeben hat
     if (answered === false) {
+      setIsRunning(false);
       // validate überprüft, ob die Antwort des Nutzers richtig war
       let validate = quiz.questions[index].answers[aIndex].is_correct;
       if (validate === 1) {
@@ -83,6 +88,8 @@ const Play = ({ user }) => {
           ...prevLog,
           quiz.questions[index].question_id,
         ]);
+      } else {
+        setWrongCount(wrongCount + 1);
       }
       setClickedIndex(aIndex);
       setAnswered(true);
@@ -149,19 +156,47 @@ const Play = ({ user }) => {
     }
   }, [message]); // Only run the effect when the message state changes
 
+  useEffect(() => {
+    if (timeLeft <= 0 || !isRunning) {
+      if (timeLeft <= 0) {
+        setAnswered(true);
+        setWrongCount((wrongCount) => wrongCount + 1);
+      }
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => Math.max(prev - 1, 0));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeLeft, isRunning]);
+
+  const resetTimer = () => {
+    setTimeLeft(20);
+    setAnswered(false);
+    setIsRunning(true);
+  };
+
+  const widthPercentage = (timeLeft / 20) * 100;
+  const barColor = timeLeft <= 5 ? "red-400" : "green-400";
+
   return (
     <>
-      <Link to="/dashboard" className="absolute top-3 left-3 text-4xl">
-        <IoHome className="hover:text-secondary" />
-      </Link>
-      <span className="absolute right-12 text-3xl top-12 flex text-secondary font-bold items-center select-none">
-        <IoRibbon className="text-5xl mr-2" />+ {points}
-      </span>
-
+      <header className="flex flex-row justify-between p-4 w-screen">
+        <Link to="/dashboard" className="text-4xl">
+          <IoHome className="hover:text-secondary" />
+        </Link>
+        <span className="text-3xl font-black">{quiz.quiz_name}</span>
+        <span className=" text-2xl flex text-neutral font-black items-center select-none opacity-70">
+          <IoRibbon className="text-3xl mr-2" />
+          {points}
+        </span>
+      </header>
       {loading ? (
         <span className="relative top-20 left-20">Lade Quiz-Daten...</span>
       ) : (
-        <div className="flex flex-col items-center justify-center min-h-screen w-screen bg-base-100 select-none ">
+        <div className="flex flex-col items-center justify-center w-screen bg-base-100 select-none mt-16">
           {rate && (
             <Rate
               setError={setError}
@@ -169,9 +204,6 @@ const Play = ({ user }) => {
               catalog_id={catalog_id}
             />
           )}
-
-          {/* Quiz Name anzeigen */}
-          <h1 className="font-black mb-8 mt-8 text-4xl">{quiz.quiz_name}</h1>
           {report && (
             <Report
               setError={setError}
@@ -181,8 +213,32 @@ const Play = ({ user }) => {
             />
           )}
           <div className="w-[50%] min-w-[400px] max-w-[1000px] flex flex-col items-center justify-center">
+            <div className="w-[70%] text-center text-2xl">
+              <span
+                className={`font-black transition-color duration-1000`}
+                style={{
+                  color: `${
+                    timeLeft <= 5
+                      ? `var(--color-red-400)`
+                      : `var(--color-green-400)`
+                  }`,
+                }}
+              >
+                {timeLeft}
+              </span>
+              <div
+                className={`${
+                  timeLeft <= 0 ? `bg-red-400` : `bg-base-200`
+                } rounded-full h-4 mb-4 overflow-hidden`}
+              >
+                <div
+                  className={`bg-${barColor} h-4 rounded-full transition-all duration-1000`}
+                  style={{ width: `${widthPercentage}%` }}
+                ></div>
+              </div>
+            </div>
             {/* Frage anzeigen */}
-            <div className="mb-4 pt-32 pb-32 pl-2 pr-2 relative bg-secondary rounded-4xl w-full justify-center flex items-center shadow-md">
+            <div className="mb-4 pt-28 pb-28 pl-2 pr-2 relative bg-secondary rounded-4xl w-full justify-center flex items-center shadow-md">
               <TbMessageReportFilled
                 className="absolute top-0 left-0 rounded-br-4xl text-neutral bg-base-100 p-2 size-12 cursor-pointer hover:text-amber-500"
                 data-tooltip-id="tooltip-report"
@@ -201,14 +257,14 @@ const Play = ({ user }) => {
               {quiz.questions[index].answers.map((answer, aIndex) => (
                 <li
                   key={aIndex}
-                  className={`shadow-md answer-item pl-2 pr-2 pt-8 pb-8 font-black rounded-2xl text-lg text-center cursor-pointer ${
+                  className={`shadow-md answer-item pl-2 pr-2 pt-8 pb-8 font-black rounded-2xl text-lg text-center cursor-pointer transition-colors duration-100 ease-in ${
                     answered
-                      ? "bg-accent"
+                      ? "bg-red-400"
                       : "hover:bg-secondary hover:text-base-100 bg-base-200"
                   } ${
                     answered &&
                     quiz.questions[index].answers[aIndex].is_correct === 1 &&
-                    "!bg-primary"
+                    "!bg-green-400 "
                   } ${clickedIndex === aIndex && "border-3 border-secondary"} `}
                   onClick={() => handleAnswer(aIndex)}
                 >
@@ -216,35 +272,41 @@ const Play = ({ user }) => {
                 </li>
               ))}
             </ul>
-            {quiz.questions[index].explanation_text && answered && (
-              <div className="bg-amber-300 text-lg text-bold text-neutral w-[95%] mt-4 pt-4 pb-4 rounded-4xl flex-row items-center flex shadow-md">
-                <FaLightbulb className="text-4xl ml-4 mr-4" />{" "}
-                <span className="">
-                  {quiz.questions[index].explanation_text}
-                </span>
-              </div>
-            )}
+            {/* {quiz.questions[index].explanation_text && answered && ( */}
+            <div
+              className={`bg-amber-300 mt-4 text-neutral w-[100%] rounded-full items-center flex flex-row shadow-md overflow-hidden transition-height duration-200 ease-in-out ${
+                quiz.questions[index].explanation_text && answered
+                  ? `h-auto p-4`
+                  : `h-0`
+              }`}
+            >
+              <FaLightbulb className="text-2xl ml-2 mr-2 basis-1/16" />
+              <span className="pl-4 pr-4 basis-15/16 font-bold italic text-lg">
+                {quiz.questions[index].explanation_text}
+              </span>
+            </div>
+            {/* )} */}
             <IoArrowForwardCircle
-              className={`text-6xl cursor-pointer mt-4 ${
+              className={`text-6xl mt-4 transition-colors duration-300 ease-in-out ${
                 answered === false
-                  ? "text-neutral"
-                  : "text-primary hover:text-secondary"
+                  ? "text-base-300"
+                  : "text-neutral hover:text-secondary cursor-pointer"
               }`}
               onClick={handleForward}
             />
           </div>
           <div className="w-[70%] max-w-[1200px] h-2 gap-2 mt-4 flex flex-row mb-8">
             <div
-              className="bg-green-600 rounded-full h-full"
+              className="bg-green-400 rounded-full h-full transition-[width] duration-600 ease-in-out"
               style={{ width: `${points * 10}%` }}
             ></div>
             <div
-              className="bg-red-600 rounded-full h-full"
-              style={{ width: `${(index - points) * 10}%` }}
+              className="bg-red-400 rounded-full h-full transition-[width] duration-600 ease-in-out"
+              style={{ width: `${wrongCount * 10}%` }}
             ></div>
             <div
-              className="bg-base-300 rounded-full h-full"
-              style={{ width: `${(10 - index) * 10}%` }}
+              className="bg-base-300 rounded-full h-full transition-[width] duration-600 ease-in-out"
+              style={{ width: `${(10 - (points + wrongCount)) * 10}%` }}
             ></div>
           </div>
         </div>
