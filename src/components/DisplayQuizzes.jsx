@@ -14,7 +14,7 @@ const DisplayQuizzes = ({
   setError,
   text,
 }) => {
-  const [sortMethod, setSortMethod] = useState("Datum");
+  const [sortMethod, setSortMethod] = useState("Bewertung");
   const [filteredQuizzes, setFilteredQuizzes] = useState([]);
   const handlePlay = (catalog_id, total_questions) => {
     if (total_questions >= 10) {
@@ -39,7 +39,7 @@ const DisplayQuizzes = ({
     } else {
       setFilteredQuizzes(
         filteredQuizzes.sort((a, b) => {
-          return parseInt(a.catalog_id) - parseInt(b.catalog_id); // Konvertiert zu Int für Vergleich
+          return parseInt(b.catalog_id) - parseInt(a.catalog_id); // Konvertiert zu Int für Vergleich
         })
       );
       setSortMethod("Datum");
@@ -56,8 +56,15 @@ const DisplayQuizzes = ({
     );
   };
   useEffect(() => {
-    setFilteredQuizzes(quizzes);
-  }, [setFilteredQuizzes, quizzes]);
+    setFilteredQuizzes(
+      quizzes.sort((a, b) => {
+        const ratingA = a.avg_rating ? parseFloat(a.avg_rating) : 0; // Konvertiere zu Float or 0 wenn null
+        const ratingB = b.avg_rating ? parseFloat(b.avg_rating) : 0; // Konvertiere zu Float or 0 wenn null
+
+        return ratingB - ratingA;
+      })
+    );
+  }, [quizzes]);
 
   return (
     <>

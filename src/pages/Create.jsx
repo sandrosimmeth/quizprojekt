@@ -100,7 +100,7 @@ const Create = ({ user }) => {
           </li>
         </ul>
       </header>
-      <div className="w-[50rem] flex flex-col justify-center bg-base-200 shadow-xl rounded-4xl">
+      <div className="w-[50%] max-w-[1200px] min-w-[600px] flex flex-col justify-center bg-base-200 shadow-xl rounded-4xl">
         {step === 1 && (
           <CreateQuizStep1
             quizData={quizData}
@@ -129,7 +129,7 @@ const Create = ({ user }) => {
       <div className="flex flex-col justify-center items-center">
         {step === 4 && (
           <button
-            className="btn text-lg bg-success text-neutral-50 mt-8 h-[3rem] hover:bg-secondary"
+            className="btn text-lg bg-success text-neutral-50 mt-8 h-[3rem] hover:bg-secondary mb-8"
             onClick={handleSubmit}
             disabled={submitted}
           >

@@ -34,7 +34,7 @@ const CreateQuizStep2 = ({ quizData, setQuizData, setStep, setError }) => {
           type="text"
           id="quizNameInput"
           value={quizData.quiz_name}
-          className="input w-[70%] text-xl mt-8 rounded-4xl h-12 !bg-base-100"
+          className="input w-[70%] text-xl mt-8 rounded-4xl h-12 !bg-base-100 pl-4 pr-4"
           placeholder="Gib deinem Quiz einen Namen..."
           onChange={handleChange}
           maxLength={40}

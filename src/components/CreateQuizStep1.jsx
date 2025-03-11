@@ -65,7 +65,7 @@ const CreateQuizStep1 = ({ quizData, setQuizData, setStep, setError }) => {
           <p>Lade Module...</p>
         ) : (
           <select
-            className="w-[70%] text-xl mt-8 rounded-4xl h-12 !bg-base-100"
+            className="w-[70%] text-xl mt-8 rounded-4xl h-12 !bg-base-100 pl-4 pr-4"
             defaultValue={quizData.module_id || "invalid"}
             id="moduleDataList"
             disabled={loading}

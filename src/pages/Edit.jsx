@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IoHome, IoSave } from "react-icons/io5";
+import { IoHome, IoSave, IoInformationCircle } from "react-icons/io5";
 import { IoAddCircle } from "react-icons/io5";
 import { IoTrash } from "react-icons/io5";
 import EditQuestion from "../components/EditQuestion";
+import { Tooltip } from "react-tooltip";
 
 const Edit = ({ user }) => {
   const [quizData, setQuizData] = useState({}); // geladene Quiz-Daten aus der Datenbank
@@ -16,6 +17,7 @@ const Edit = ({ user }) => {
   const [message, setMessage] = useState(""); // Nachricht für Operationen
   const [add, setAdd] = useState(false); // Nachricht für Operationen
   const [edited, setEdited] = useState(false); // Nachricht für Operationen
+  const [reports, setReports] = useState();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,7 +27,7 @@ const Edit = ({ user }) => {
 
   // Catalog_id aus query parameter
   const catalog_id = queryParams.get("catalog_id");
-
+  const highlight = queryParams.get("highlight");
   // Quiz Namen ändern: User Input im Array updaten
   const handleQuizNameChange = (event) => {
     setQuizData({
@@ -175,7 +177,7 @@ const Edit = ({ user }) => {
         // Überprüfen, ob die API-Antwort erfolgreich war
         if (response.data.status === "ok") {
           setQuizData(response.data.quiz);
-          setLoading(false); // Ladezustand beenden, wenn es keinen Fehler gab
+          console.log(response.data);
         } else {
           // Wenn die Antwort nicht "ok" ist -> Fehlermeldung
           setError(
@@ -187,8 +189,28 @@ const Edit = ({ user }) => {
         setError("Ein Fehler ist beim Aufruf des Servers aufgetreten."); // Fehlernachricht für den Benutzer
       }
     };
-
-    getQuiz(); // Funktion ausführen, um das Quiz zu laden
+    const getReports = async () => {
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_APP_URL}/get_reported_questions.php`,
+          { catalog_id },
+          { withCredentials: true }
+        );
+        if (response.data.status === "ok") {
+          setReports(response.data.reported_questions);
+          console.log(response.data);
+        } else {
+          setError(response.data.message);
+        }
+      } catch (error) {
+        console.error(error);
+        setError("Es gab einen internen Serverfehler");
+      }
+    };
+    getQuiz()
+      .then(() => getReports()) // Call getReports AFTER getQuiz resolves
+      .then(() => setLoading(false)) // Set loading AFTER getReports resolves
+      .catch((error) => setError("Error:", error)); // Handle any errors
   }, [catalog_id]); // Abhängig von catalog_id (wenn sich catalog_id ändert, wird der Effekt erneut ausgeführt)
 
   useEffect(() => {
@@ -216,14 +238,15 @@ const Edit = ({ user }) => {
   return (
     <>
       <div className="base-100 w-screen h-screen flex flex-col items-center select-none">
-        <IoHome
-          className="hover:text-secondary absolute top-3 left-3 text-4xl cursor-pointer"
-          onClick={handleNavigate}
-        />
-        <header className="flex flex-col items-center w-full mt-4">
-          <h1 className="text-4xl font-black text-center mb-8">
+        <header className="flex flex-row justify-between w-full mt-4">
+          <IoHome
+            className="hover:text-secondary text-4xl cursor-pointer ml-4 flex-none"
+            onClick={handleNavigate}
+          />
+          <h1 className="text-4xl font-black mb-8">
             Hey {user.username}, hier kannst du dein Quiz bearbeiten
           </h1>
+          <div></div>
         </header>
         {showEditQuestion && (
           <div className="backdrop-blur-xl w-screen h-screen fixed top-0 left-0 z-10 flex flex-col items-center justify-center">
@@ -270,14 +293,40 @@ const Edit = ({ user }) => {
               onChange={handleQuizNameChange}
               maxLength={40}
             />
-            <ul className="grid grid-cols-6 gap-4 w-[95%] mt-12">
+            <ul className="grid grid-cols-5 gap-4 w-[95%] mt-12">
               {quizData.questions.map((question, qIndex) => (
                 <li
                   key={qIndex}
-                  className="shadow-md pl-1 pr-1 pt-8 pb-8 font-black rounded-2xl text-lg text-center cursor-pointer bg-base-200 flex flex-col items-center justify-center hover:bg-secondary hover:text-base-100 relative"
+                  className="shadow-md pl-1 pr-1 pt-8 pb-8 font-black rounded-2xl text-lg text-center cursor-pointer bg-base-200 flex flex-col items-center justify-center hover:bg-secondary hover:text-base-100 relative "
+                  style={
+                    parseInt(highlight) === parseInt(question.question_id)
+                      ? { backgroundColor: "#f0ad4e" }
+                      : {}
+                  }
                   onClick={() => handleEditQuestion(qIndex)}
                 >
-                  <span className="bg-base-100 p-1 absolute right-1 top-1 rounded-full">
+                  {reports.some(
+                    (report) => report.question_id === question.question_id
+                  ) && (
+                    <IoInformationCircle
+                      className="absolute top-0 left-0 mt-[-6px] ml-[-6px] text-amber-500 rounded-full bg-base-100 hover:text-amber-600 p-1 size-8"
+                      data-tooltip-id="tooltip-report"
+                      data-tooltip-html={
+                        reports
+                          .filter(
+                            (report) =>
+                              report.question_id === question.question_id
+                          ) // Filter matching reports
+                          .map(
+                            (report) =>
+                              `<span style="font-weight:light;">${report.reporter}</span> : <span style="color:oklch(84.71% 0.199 83.87); font-weight:bold;">${report.report_reason}</span>`
+                          ) // Extract all report_reason values
+                          .join("<br />") // Join the array of reasons into a string
+                      }
+                    />
+                  )}
+                  <Tooltip id="tooltip-report" className="font-normal" />
+                  <span className="bg-base-100 p-1 absolute right-0 top-0 rounded-bl-2xl">
                     <IoTrash
                       className="text-2xl !text-neutral  hover:!text-red-500"
                       onClick={(e) => {
