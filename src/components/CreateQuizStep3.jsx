@@ -157,7 +157,7 @@ const CreateQuizStep3 = ({
       <div className="w-[100%] text-center flex flex-col items-center">
         <textarea
           id="questionInput"
-          className=" w-[80%] h-[10rem] font-bold p-6 textarea textarea-secondary bg-secondary text-white  text-xl mt-2 rounded-4xl resize-none text-center"
+          className=" w-[80%] h-[10rem] font-bold p-6 textarea textarea-secondary bg-secondary text-base-100 text-xl mt-2 rounded-4xl resize-none text-center"
           placeholder="Gib eine Frage ein..."
           value={currentQuestion.questionText}
           onChange={(e) =>
