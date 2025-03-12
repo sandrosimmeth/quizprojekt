@@ -167,11 +167,11 @@ const CreateQuizStep3 = ({
             }))
           }
         />
-        <div className="answers-container grid grid-cols-2 grid-rows-2 w-[80%] justify-center mr-4">
+        <div className="grid grid-cols-2 grid-rows-2 w-[80%] justify-center items-center mr-4">
           {currentQuestion.answers.map((answer, index) => (
             <div
               key={index}
-              className="answer-item font-bold flex flex-row items-center "
+              className="answer-item font-bold flex flex-row items-center w-full"
             >
               <input
                 type="radio"
@@ -184,7 +184,7 @@ const CreateQuizStep3 = ({
                 placeholder={`Antwort ${index + 1}`}
                 value={answer.text}
                 onChange={(e) => handleAnswerChange(index, e.target.value)}
-                className={`textarea text-white mt-4 bg-accent rounded-2xl text-lg h-24 resize-none text-center flex ${
+                className={`textarea text-white mt-4 bg-accent w-full rounded-2xl text-lg h-24 resize-none text-center ${
                   selectedAnswer === index + 1 && "bg-primary"
                 }`}
               />

@@ -101,11 +101,11 @@ const EditQuestion = ({
             }))
           }
         />
-        <div className="answers-container grid grid-cols-2 grid-rows-2 w-[80%] justify-center mr-4">
+        <div className="grid grid-cols-2 grid-rows-2 w-[80%] justify-center items-center mr-4">
           {currentQuestion.answers.map((answer, index) => (
             <div
+              className="answer-item font-bold flex flex-row items-center w-full"
               key={index}
-              className="answer-item font-bold flex flex-row items-center"
             >
               <input
                 type="radio"
@@ -118,7 +118,7 @@ const EditQuestion = ({
                 placeholder={`Antwort ${index + 1}`}
                 value={answer.text}
                 onChange={(e) => handleAnswerChange(index, e.target.value)}
-                className={`textarea text-white mt-4 bg-accent rounded-2xl text-lg h-24 resize-none text-center flex ${
+                className={`textarea text-white mt-4 bg-accent w-full rounded-2xl text-lg h-24 resize-none text-center  ${
                   answer.is_correct && "bg-primary"
                 }`}
               />

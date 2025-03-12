@@ -257,7 +257,7 @@ const Edit = ({ user }) => {
         </header>
         {showEditQuestion && (
           <div className="backdrop-blur-xl w-screen h-screen fixed top-0 left-0 z-10 flex flex-col items-center justify-center">
-            <div className="w-[50rem] flex flex-col justify-center bg-base-200 shadow-xl rounded-4xl">
+            <div className="w-[50%] max-w-[1200px] min-w-[600px] flex flex-col justify-center bg-base-200 shadow-xl rounded-4xl">
               <EditQuestion
                 setQuizData={setQuizData}
                 currentQuestion={currentQuestion}
@@ -325,7 +325,9 @@ const Edit = ({ user }) => {
                         reports
                           .filter(
                             (report) =>
-                              report.question_id === question.question_id
+                              report.question_id === question.question_id &&
+                              report.done === 0 &&
+                              report.dismissed === 0
                           ) // Filter matching reports
                           .map(
                             (report) =>
