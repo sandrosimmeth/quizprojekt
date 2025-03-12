@@ -52,8 +52,15 @@ const EditQuestion = ({
         // Fügt die currentQuestion zu quizData.questions hinzu
         setQuizData((prevQuizData) => ({
           ...prevQuizData,
-          questions: [...prevQuizData.questions, currentQuestion],
+          questions: [
+            ...prevQuizData.questions,
+            {
+              ...currentQuestion,
+              question_id: `temp-${prevQuizData.questions.length + 1}`,
+            },
+          ],
         }));
+
         setEdited(true);
         // Reset der aktuellen Frage & Antworten
         setCurrentQuestion([]);

@@ -90,6 +90,7 @@ const Edit = ({ user }) => {
   const handleAddQuestion = () => {
     setAdd(true);
     setCurrentQuestion({
+      question_id: null,
       text: "",
       answers: [
         { text: "", is_correct: true },
@@ -234,6 +235,12 @@ const Edit = ({ user }) => {
       return () => clearTimeout(timer);
     }
   }, [error]); // Only run the effect when the message state changes
+  useEffect(() => {
+    console.log(quizData);
+  }, [quizData]); // Only run the effect when the message state changes
+  useEffect(() => {
+    console.log(currentQuestion);
+  }, [currentQuestion]); // Only run the effect when the message state changes
 
   return (
     <>
@@ -306,7 +313,10 @@ const Edit = ({ user }) => {
                   onClick={() => handleEditQuestion(qIndex)}
                 >
                   {reports.some(
-                    (report) => report.question_id === question.question_id
+                    (report) =>
+                      report.question_id === question.question_id &&
+                      report.done === 0 &&
+                      report.dismissed === 0
                   ) && (
                     <IoInformationCircle
                       className="absolute top-0 left-0 mt-[-6px] ml-[-6px] text-amber-500 rounded-full bg-base-100 hover:text-amber-600 p-1 size-8"
