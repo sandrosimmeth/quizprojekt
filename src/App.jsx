@@ -3,12 +3,13 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Create from "./pages/Create";
 import Play from "./pages/Play";
-
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Edit from "./pages/Edit";
 import Faq from "./pages/Faq";
 import ReportedQuestions from "./pages/ReportedQuestions";
+import Impressum from "./pages/Impressum";
+import About from "./pages/About";
 
 const App = () => {
   const [user, setUser] = useState(null); // Initialize as null
@@ -40,50 +41,68 @@ const App = () => {
 
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Login setUser={setUser} />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute user={user}>
-              <Dashboard user={user} />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/create"
-          element={
-            <ProtectedRoute user={user}>
-              <Create user={user} />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/play"
-          element={
-            <ProtectedRoute user={user}>
-              <Play user={user} />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/edit"
-          element={
-            <ProtectedRoute user={user}>
-              <Edit user={user} />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/faq" element={<Faq user={user} />} />
-        <Route
-          path="/reports"
-          element={
-            <ProtectedRoute user={user}>
-              <ReportedQuestions user={user} />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+      <div className="flex flex-col min-h-screen">
+        <div className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Login setUser={setUser} />} />
+            <Route path="/impressum" element={<Impressum />} />
+            <Route path="/about" element={<About />} />
+
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute user={user}>
+                  <Dashboard user={user} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/create"
+              element={
+                <ProtectedRoute user={user}>
+                  <Create user={user} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/play"
+              element={
+                <ProtectedRoute user={user}>
+                  <Play user={user} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/edit"
+              element={
+                <ProtectedRoute user={user}>
+                  <Edit user={user} />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/faq" element={<Faq user={user} />} />
+            <Route
+              path="/reports"
+              element={
+                <ProtectedRoute user={user}>
+                  <ReportedQuestions user={user} />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </div>
+        <footer className="bg-gray-100 border-t border-gray-300 p-1 justify-center flex flex-row gap-16 text-sm">
+          <Link to="/dashboard" className="hover:text-secondary">
+            Home
+          </Link>
+          <Link to="/impressum" className="hover:text-secondary">
+            Impressum
+          </Link>
+          <Link to="/about" className="hover:text-secondary">
+            Über uns
+          </Link>
+        </footer>
+      </div>
     </Router>
   );
 };

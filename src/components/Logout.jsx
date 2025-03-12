@@ -15,8 +15,8 @@ const Logout = ({ className }) => {
         { withCredentials: true }
       );
       if (response.data.message === 1) {
-        // Leeren der clientseitgen session storage nach erfolgreichem API Call
-        sessionStorage.removeItem("user");
+        // Leeren der clientseitigen session storage nach erfolgreichem API Call
+        sessionStorage.clear();
         setMessage(
           "Logout erfolgreich! Du wirst wieder zur Login-Seite weitergeleitet"
         );

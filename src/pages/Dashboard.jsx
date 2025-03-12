@@ -222,7 +222,7 @@ const Dashboard = ({ user }) => {
         user={user}
         points={points}
       />
-      <div className="w-screen h-screen bg-base-100 overflow-xclip">
+      <div className="w-screen bg-base-100">
         <div className="flex flex-col w-full h-96 pl-6 pr-6 mt-12">
           <div className="max-w-full flex flex-col flex-none h-full">
             <div className="mt-2 flex"></div>
