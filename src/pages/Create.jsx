@@ -84,7 +84,7 @@ const Create = ({ user }) => {
   }, [message]);
 
   return (
-    <div className="base-100 w-screen h-screen flex flex-col items-center select-none">
+    <div className="base-100 w-screen flex flex-col items-center select-none">
       <Link to="/dashboard" className="absolute top-3 left-3 text-4xl">
         <IoHome className="hover:text-secondary" />
       </Link>

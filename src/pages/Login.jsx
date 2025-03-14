@@ -37,7 +37,7 @@ const Login = ({ setUser }) => {
 
   return (
     <>
-      <div className="bg-linear-to-bl from-primary to-secondary w-screen h-screen flex flex-col items-center font-[Nunito] justify-center select-none">
+      <div className="bg-linear-to-bl from-primary to-secondary w-screen min-h-screen flex flex-col items-center font-[Nunito] justify-center select-none">
         <div className="bg-base-100 flex flex-col items-center h-[36rem] w-[26rem] mt-[-2rem] justify-center shadow-xl rounded-2xl p-4">
           <img src={quizLogo} className="w-48 mb-auto" />
           <h2 className="text-center text-quiz-800 font-black text-3xl mb-8">

@@ -93,7 +93,7 @@ const ReportedQuestions = () => {
 
   return (
     <>
-      <header className="flex flex-row justify-between p-4  w-screen">
+      <header className="flex flex-row justify-between p-4 w-screen">
         <Link to="/dashboard" className="text-4xl">
           <IoHome className="hover:text-secondary" />
         </Link>

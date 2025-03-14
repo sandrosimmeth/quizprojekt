@@ -91,7 +91,7 @@ const App = () => {
             />
           </Routes>
         </div>
-        <footer className="bg-gray-100 border-t border-gray-300 p-1 justify-center flex flex-row gap-16 text-sm">
+        <footer className="bg-base-200 p-1 justify-center flex flex-row gap-16 text-sm w-full">
           <Link to="/dashboard" className="hover:text-secondary">
             Home
           </Link>

@@ -244,7 +244,7 @@ const Edit = ({ user }) => {
 
   return (
     <>
-      <div className="base-100 w-screen h-screen flex flex-col items-center select-none">
+      <div className="base-100 w-screen flex flex-col items-center select-none">
         <header className="flex flex-row justify-between w-full mt-4">
           <IoHome
             className="hover:text-secondary text-4xl cursor-pointer ml-4 flex-none"
@@ -371,7 +371,7 @@ const Edit = ({ user }) => {
               Änderungen speichern
             </button>
             <button
-              className="btn mt-8 w-38 h-8 text-sm rounded-2xl bg-red-400 text-neutral hover:bg-red-500 hover:text-base-100 border-0 flex"
+              className="btn mt-8 w-38 h-8 text-sm rounded-2xl bg-red-400 text-neutral hover:bg-red-500 hover:text-base-100 border-0 flex  mb-16"
               onClick={handleDeleteQuiz}
             >
               <IoTrash className="mr-2 text-2xl" />
