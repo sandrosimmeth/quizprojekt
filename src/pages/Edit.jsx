@@ -304,7 +304,7 @@ const Edit = ({ user }) => {
               {quizData.questions.map((question, qIndex) => (
                 <li
                   key={qIndex}
-                  className="shadow-md pl-1 pr-1 pt-8 pb-8 font-black rounded-2xl text-lg text-center cursor-pointer bg-base-200 flex flex-col items-center justify-center hover:bg-secondary hover:text-base-100 relative "
+                  className="shadow-md pl-1 pr-1 pt-8 pb-8 font-black rounded-2xl text-lg text-center cursor-pointer bg-base-200 flex flex-col items-center justify-center hover:bg-secondary hover:text-base-100 relative break-all"
                   style={
                     parseInt(highlight) === parseInt(question.question_id)
                       ? { backgroundColor: "#f0ad4e" }
@@ -347,7 +347,7 @@ const Edit = ({ user }) => {
                       }}
                     />
                   </span>
-                  <span className="flex">{question.text}</span>
+                  {question.text}
                 </li>
               ))}
               <li
