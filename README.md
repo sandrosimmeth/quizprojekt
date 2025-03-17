@@ -15,6 +15,7 @@ Empfohlen: Installiere **XAMPP** und starte den **Apache-Webserver** und die **M
 
 ## Ordnerstruktur
 
+```
 .
 ├── .env # Enthält die Umgebungsvariable für den Pfad zur API
 ├── .gitignore # Listet Dateien und Ordner auf, die von Git ignoriert werden sollen (z.B. node_modules)
@@ -79,6 +80,7 @@ Empfohlen: Installiere **XAMPP** und starte den **Apache-Webserver** und die **M
 │ ├── Login.jsx # Zeigt das Login-Formular an
 │ ├── Play.jsx # Zeigt das Quiz-Spiel für den Benutzer an
 │ ├── ReportedQuestions.jsx # Zeigt eine Liste gemeldeter Fragen des Nutzers an
+```
 
 ## Schritte zum Aufsetzen der Entwicklungsumgebung
 
