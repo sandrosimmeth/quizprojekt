@@ -88,4 +88,5 @@ Empfohlen: Installiere **XAMPP** und starte den **Apache-Webserver** und die **M
 2. **Backend einrichten:** Verschiebe den Ordner **php** oder den gesamten Ordner **quizprojekt** nach **xampp/htdocs**
 3. **Installiere Dependencies:** Öffne den Ordner **quizprojekt** in deiner IDE und führe **npm install aus**, dies installiert automatisch alle Dependencies
 4. **API-Pfad anpassen:** Im Ordner **quizprojekt** in der Datei **.env** den Pfad zu den API-Endpunkten angeben (für dev server mit xampp: "http://localhost/quizprojekt/php/api")
-5. **Entwicklungsserver starten:** Mit dem Befehl **npm run dev** startet der Entwicklungsserver
+5. **Datenbank anlegen:** Lege die Entwicklungs-DB **db_441271_1.sql** im Ordner **php/db/** ist, in deiner lokalen Datenbank an (bei XAMPP unter "http://localhost/phpmyadmin/")
+6. **Entwicklungsserver starten:** Mit dem Befehl **npm run dev** startet der Entwicklungsserver
