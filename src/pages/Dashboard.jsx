@@ -280,7 +280,7 @@ const Dashboard = ({ user }) => {
             )}
           </div>
         </div>
-        <div className="flex flex-col w-full h-96 pl-6 pr-6 ">
+        <div className="flex flex-col w-full h-96 pl-6 pr-6 mb-6">
           <div className="max-w-full flex flex-col flex-none h-full">
             <div className="mt-2 flex"></div>
             {/* Hier wird allQuizzes angezeigt*/}
