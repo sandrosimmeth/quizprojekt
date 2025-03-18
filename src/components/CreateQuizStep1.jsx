@@ -9,7 +9,6 @@ const CreateQuizStep1 = ({ quizData, setQuizData, setStep, setError }) => {
 
   const handleChange = (e) => {
     setInput(e.target.value);
-    console.log(e.target.value);
   };
 
   useEffect(() => {

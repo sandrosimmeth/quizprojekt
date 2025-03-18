@@ -15,8 +15,9 @@ const CreateQuizStep3 = ({
   setCurrentQuestion,
   setError,
 }) => {
-  const [selectedAnswer, setSelectedAnswer] = useState(1); // Tracks the correct answer
+  const [selectedAnswer, setSelectedAnswer] = useState(0); // In diesem State befindet sich die korrekte Antwort
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(
+    // Dieser State trackt den Index der aktuell bearbeitenden Frage
     parseInt(quizData.questions.length)
   );
   // Update bei Eingabe der Antwort ins Feld
@@ -29,6 +30,7 @@ const CreateQuizStep3 = ({
   };
   // Update der richtigen Antwort
   const handleCorrectAnswerChange = (index) => {
+    setSelectedAnswer(index);
     setCurrentQuestion((prev) => {
       const updatedAnswers = prev.answers.map((answer, i) => ({
         ...answer,
@@ -36,7 +38,6 @@ const CreateQuizStep3 = ({
       }));
       return { ...prev, answers: updatedAnswers };
     });
-    setSelectedAnswer(index + 1);
   };
 
   const addQuestion = () => {
@@ -47,12 +48,11 @@ const CreateQuizStep3 = ({
       // Hinzufügen bzw. aktualisieren der Fragen im Objekt quizData
       setQuizData((prevQuizData) => {
         const updatedQuestions = [...prevQuizData.questions]; // Create a copy of the questions array
-
         if (currentQuestionIndex === updatedQuestions.length) {
-          // If the index is at the end, add the new question
+          // Wenn der index am Ende des Objekts ist, dann wird eine neue Frage hinzugefügt
           updatedQuestions.push(currentQuestion);
         } else {
-          // Otherwise, update the question at the specified index
+          // Wenn der Index irgendwo im Array ist, muss die Frage an diesem Index aktualisiert werden
           updatedQuestions[currentQuestionIndex] = currentQuestion;
         }
 
@@ -87,6 +87,22 @@ const CreateQuizStep3 = ({
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
+
+  useEffect(() => {
+    //Wenn wir uns mit currentQuestionIndex im Array und nicht an erster oder letzer Stelle befinden wird die ausgewählte richtige Antwort aus dem quizData Objekt geladen
+    if (
+      quizData.questions.length > 0 &&
+      currentQuestionIndex !== undefined &&
+      currentQuestionIndex < quizData.questions.length
+    ) {
+      setSelectedAnswer(
+        quizData.questions[currentQuestionIndex].answers.findIndex(
+          (answer) => answer.isCorrect === true
+        )
+      );
+    }
+  }, [currentQuestionIndex, quizData]);
+
   useEffect(() => {
     if (
       currentQuestionIndex !== undefined &&
@@ -177,7 +193,7 @@ const CreateQuizStep3 = ({
                 type="radio"
                 name="correctAnswer"
                 className="flex checkbox ml-2 mt-2 mr-1 border-red-400 checked:bg-green-500 checked:border-green-900"
-                checked={selectedAnswer === index + 1}
+                checked={selectedAnswer == index}
                 onChange={() => handleCorrectAnswerChange(index)}
               />
               <textarea
@@ -185,7 +201,7 @@ const CreateQuizStep3 = ({
                 value={answer.text}
                 onChange={(e) => handleAnswerChange(index, e.target.value)}
                 className={`textarea text-white mt-4 bg-accent w-full rounded-2xl text-lg h-24 resize-none text-center ${
-                  selectedAnswer === index + 1 && "bg-primary"
+                  selectedAnswer == index && "bg-primary"
                 }`}
               />
             </div>
